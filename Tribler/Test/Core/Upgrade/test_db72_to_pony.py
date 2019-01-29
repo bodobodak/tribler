@@ -25,6 +25,11 @@ class TestUpgradeDB72ToPony(TriblerCoreTest):
         self.mds = MetadataStore(mds_db, mds_channels_dir, self.my_key)
         self.m = DispersyToPonyMigration(self.OLD_DB_SAMPLE, self.mds)
 
+    @inlineCallbacks
+    def tearDown(self):
+        self.mds.shutdown()
+        yield super(TestUpgradeDB72ToPony, self).tearDown()
+
     def test_get_personal_channel_title(self):
         self.m.initialize()
         self.assertTrue(self.m.personal_channel_title)
