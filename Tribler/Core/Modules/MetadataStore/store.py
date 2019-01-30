@@ -157,7 +157,12 @@ class MetadataStore(object):
                 if blob_sequence_number is not None:
                     # Skip blobs containing data we already have and those that are
                     # ahead of the channel version known to us
-                    if blob_sequence_number <= channel.local_version or blob_sequence_number > channel.timestamp:
+                    # ==================|          channel data       |===
+                    # ===start_timestamp|---local_version----timestamp|===
+                    # local_version is essentially a cursor pointing into the current state of update process
+                    if blob_sequence_number <= channel.start_timestamp or \
+                            blob_sequence_number <= channel.local_version or \
+                            blob_sequence_number > channel.timestamp:
                         continue
                     try:
                         self.process_mdblob_file(full_filename)
